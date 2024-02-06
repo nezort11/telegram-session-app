@@ -248,22 +248,22 @@ export const LoginUsingCode = () => {
 
       <br />
 
-      <Stack
-        component="form"
-        // onSubmit={handleLogin}
-        spacing={1}
-      >
+      <Stack component="form" onSubmit={handleLogin} spacing={1}>
         <Box>
           <TextField
             label="Login code"
             type="text"
             required
             fullWidth
-            disabled={!isLoginCodeSent}
+            disabled={!isLoginCodeSent || isLoggingIn}
             onChange={handleLoginCodeChange}
           />
         </Box>
-        <Button variant="contained" type="submit" disabled={!isLoginCodeSent}>
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={!isLoginCodeSent || isLoggingIn}
+        >
           Login
         </Button>
       </Stack>
