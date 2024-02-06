@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 // import { SnackbarProvider } from "material-ui-snackbar-provider";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
-import App from "./App";
+import { App } from "./App";
 
 // // @ts-ignore
 // type SnackbarProviderProps = Parameters<typeof SnackbarProvider>[0];
