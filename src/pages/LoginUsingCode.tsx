@@ -28,6 +28,10 @@ const telegramSessionClient = axios.create({
   baseURL: "https://telegram-session-api.vercel.app/api/",
 });
 
+type LoginResponse = {
+  phoneCodeHash: string;
+};
+
 type LoginConfirmResponse = {
   session: string;
 };
@@ -48,6 +52,7 @@ export const LoginUsingCode = () => {
   const [isLoginCodeSent, setIsLoginCodeSent] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const loginCodeHashRef = useRef<string | undefined>();
 
   const [loginCode, setLoginCode] = useState("");
 
@@ -80,9 +85,16 @@ export const LoginUsingCode = () => {
 
     setIsSendingLoginCode(true);
     try {
-      await telegramSessionClient.post("/login", {
-        phoneNumber,
-      });
+      const loginResponse = await telegramSessionClient.post<LoginResponse>(
+        "/login",
+        {
+          phoneNumber,
+        }
+      );
+      const loginResponseData = loginResponse.data;
+      const loginCodeHash = loginResponseData.phoneCodeHash;
+      loginCodeHashRef.current = loginCodeHash;
+
       setIsLoginCodeSent(true);
     } catch (error) {
       console.error(error);
@@ -104,13 +116,15 @@ export const LoginUsingCode = () => {
 
     setIsLoggingIn(true);
     try {
+      const loginCodeHash = loginCodeHashRef.current!;
       const loginResponse =
         await telegramSessionClient.post<LoginConfirmResponse>(
           "/login/confirm",
           {
             phoneNumber,
-            password,
+            phoneCodeHash: loginCodeHash,
             phoneCode: loginCode,
+            password,
           }
         );
       setIsLoggedIn(true);
